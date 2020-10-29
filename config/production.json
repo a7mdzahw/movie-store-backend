@@ -1,0 +1,6 @@
+{
+  "name": "Vidly - Production",
+  "sections": {
+    "types": ["genres", "movies", "user"]
+  }
+}
