@@ -1,4 +1,5 @@
 {
   "password": "V_PASSWORD",
-  "jwtKey": "V_JWTKEY"
+  "jwtKey": "V_JWTKEY",
+  "db": "V_DB"
 }

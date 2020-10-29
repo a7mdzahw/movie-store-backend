@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const config = require("config");
 
 function dbStart() {
   mongoose
-    .connect("mongodb://localhost/vidly", {
+    .connect(config.get("db") || "mongodb://localhost/vidly", {
       useUnifiedTopology: true,
       useNewUrlParser: true,
     })
