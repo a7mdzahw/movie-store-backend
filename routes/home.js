@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
   res.render("index", {
     title: "Vidly",
-    message: "This is my First Pug App",
+    message: "Vidly Backend By Zahw ♥",
   });
 });
 

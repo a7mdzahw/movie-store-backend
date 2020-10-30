@@ -25,7 +25,7 @@ router.post("/", auth, async (req, res) => {
 });
 
 //update
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   try {
     const genre = await Genre.findByIdAndUpdate(
       req.params.id,
@@ -47,7 +47,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //delete
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const genre = await Genre.findById(req.params.id);
     genre.deleteOne(() => res.send(genre));
@@ -57,18 +57,3 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
-
-// const genre = genres.find((g) => g.id === parseInt(req.params.id));
-// if (!genre) return res.status(404).send("No Such Genre");
-// const { error } = validate(req.body);
-// if (error) return res.status(400).send({ Error: "Bad Request" });
-
-// genre.name = req.body.name;
-// res.send(genre);
-
-// const genre = genres.find((g) => g.id === parseInt(req.params.id));
-// if (!genre) return res.status(404).send("No Such Genre");
-
-// const index = genres.indexOf(genre);
-// genres.splice(index, 1);
-// res.send(genre);
