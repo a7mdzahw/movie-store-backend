@@ -34,6 +34,32 @@ router.post("/", async (req, res) => {
   res.send(movie);
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { error } = validateMovie(req.body);
+    if (error) return res.status(400).send(error.message);
+
+    let movie = await Movie.findById(req.params.id);
+    let genre = await Genre.findById(req.body.genreID);
+    if (!genre) return res.status(400).send("Invalid Genre.");
+
+    const { title, genreID } = req.body;
+    movie.set({
+      title,
+      genre: {
+        _id: genreID,
+        name: genre.name,
+      },
+      ...req.body,
+    });
+
+    await movie.save();
+    res.send(movie);
+  } catch (ex) {
+    res.status(404).send(ex.message);
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     const removed = await Movie.findByIdAndDelete(req.params.id);
