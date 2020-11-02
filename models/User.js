@@ -10,7 +10,10 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.genToken = function () {
-  return jwt.sign({ _id: this._id, email: this.email }, config.get("jwtKey"));
+  return jwt.sign(
+    { _id: this._id, name: this.name, email: this.email },
+    config.get("jwtKey")
+  );
 };
 
 const User = mongoose.model("User", userSchema);
