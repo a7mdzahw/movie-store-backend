@@ -32,11 +32,14 @@ router.put("/:id", auth, async (req, res) => {
   const isValid = mongoose.Types.ObjectId.isValid(id);
   if (!isValid) return res.status(400).send("Invalid ID");
 
-  const todo = await ToDo.find({ userId: req.user._id, _id: id });
-  if (!todo) return res.status(404).send("No Such ToDo");
+  let todo = await ToDo.find({ userId: req.user._id, _id: id });
+  if (!todo.length) return res.status(404).send("No Such ToDo");
 
-  todo.set(_.pick(req.body, ["title", "description", "isDone"]));
-  await todo.save();
+  todo = await ToDo.findByIdAndUpdate(
+    id,
+    { $set: _.pick(req.body, ["title", "description", "isDone"]) },
+    { new: true, useFindAndModify: false }
+  );
 
   res.send(todo);
 });
