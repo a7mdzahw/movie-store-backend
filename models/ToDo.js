@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const todoSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  user: { type: mongoose.Types.ObjectId, required: true },
+  userId: { type: mongoose.Types.ObjectId },
   description: { type: String, maxlength: 255 },
   isDone: { type: Boolean, default: false },
   dateCreated: { type: Date, default: Date.now },
