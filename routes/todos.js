@@ -15,11 +15,11 @@ router.get("/", auth, async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const { error } = validateToDo(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  const todo = {
+  const body = {
     ..._.pick(req.body, ["title", "description", "isDone"]),
     userId: req.user._id,
   };
-  const todo = new ToDo(todo);
+  const todo = new ToDo(body);
   await todo.save();
   res.send(todo);
 });
