@@ -47,7 +47,7 @@ router.delete("/:id", auth, async (req, res) => {
     if (!todo) {
       return res.status(404).send("No Such ToDo or Deleted");
     }
-    await todo.remove();
+    await ToDo.deleteOne({ _id: req.params.id });
     res.send(todo);
   } catch (ex) {
     res.status(400).send("Invalid ID");
