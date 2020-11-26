@@ -1,24 +1,30 @@
 const express = require("express");
 const router = express.Router();
-const _ = require("lodash");
 const mongoose = require("mongoose");
+const _ = require("lodash");
+
+const auth = require("../middlewares/auth");
 const { ToDo, validateToDo } = require("../models/ToDo");
 
-router.get("/", async (req, res) => {
-  const todos = await ToDo.find().sort("dateCreated");
+router.get("/", auth, async (req, res) => {
+  const userId = req.user._id;
+  const todos = await ToDo.find({ userId }).sort("dateCreated");
   res.send(todos);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateToDo(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
-  const todo = new ToDo(_.pick(req.body, ["title", "description", "isDone"]));
+  const todo = {
+    ..._.pick(req.body, ["title", "description", "isDone"]),
+    userId: req.user._id,
+  };
+  const todo = new ToDo(todo);
   await todo.save();
   res.send(todo);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const { error } = validateToDo(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -26,7 +32,7 @@ router.put("/:id", async (req, res) => {
   const isValid = mongoose.Types.ObjectId.isValid(id);
   if (!isValid) return res.status(400).send("Invalid ID");
 
-  const todo = await ToDo.findById(id);
+  const todo = await ToDo.find({ userId: req.user._id, _id: id });
   if (!todo) return res.status(404).send("No Such ToDo");
 
   todo.set(_.pick(req.body, ["title", "description", "isDone"]));
@@ -35,10 +41,11 @@ router.put("/:id", async (req, res) => {
   res.send(todo);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const todo = await ToDo.findByIdAndRemove(req.params.id);
-    if (!todo) return res.status(404).send("No Such ToDo or Deleted");
+    if (todo.userId !== req.user._id || !todo)
+      return res.status(404).send("No Such ToDo or Deleted");
     res.send(todo);
   } catch (ex) {
     res.status(400).send("Invalid ID");
