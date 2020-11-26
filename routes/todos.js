@@ -43,9 +43,11 @@ router.put("/:id", auth, async (req, res) => {
 
 router.delete("/:id", auth, async (req, res) => {
   try {
-    const todo = await ToDo.findByIdAndRemove(req.params.id);
-    if (todo.userId !== req.user._id || !todo)
+    const todo = await ToDo.find({ userId: req.user._id, _id: req.params.id });
+    if (!todo) {
       return res.status(404).send("No Such ToDo or Deleted");
+    }
+    await todo.remove();
     res.send(todo);
   } catch (ex) {
     res.status(400).send("Invalid ID");
