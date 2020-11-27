@@ -8,7 +8,15 @@ const { ToDo, validateToDo } = require("../models/ToDo");
 
 router.get("/", auth, async (req, res) => {
   const userId = req.user._id;
-  const todos = await ToDo.find({ userId }).sort("dateCreated");
+  const query = req.query.search
+    ? {
+        userId,
+        title: { $regex: new RegExp(".*" + req.query.search + ".*", "i") },
+      }
+    : {};
+  console.log(query);
+
+  const todos = await ToDo.find({ ...query }).sort("dateCreated");
   res.send(todos);
 });
 
